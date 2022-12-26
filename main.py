@@ -2,9 +2,12 @@ import json
 
 import requests
 from abc import ABC, abstractmethod
+
+import Class
 from Class import HHVacancy
 from Class import SJVacancy
-from Class import sorting
+
+
 
 class Engine(ABC):
     @abstractmethod
@@ -38,7 +41,6 @@ class HH(Engine):
             else:
                 break
         return result
-
 
 class SuperJob(Engine):
     __url = 'https://api.superjob.ru/2.0'
@@ -76,7 +78,7 @@ class SuperJob(Engine):
 #         response = requests.get(url=url, headers=headers)
 #         print(response)
 #         return self.get_vacancies('items'), result.get('found'), result('per_page'), result.get('page')
-
+import pprint
 if __name__ == '__main__':
     vvod = int(input('Выбирите SuperJob 1 или HH 2'))
     l=[]
@@ -89,8 +91,10 @@ if __name__ == '__main__':
             json.dump(result, f, ensure_ascii=False)#Dannie decodirovat nado
         # vacancies_itog_l=[]
         # vacancies_itog_d={}
+        with open('ressj.json', 'r', encoding='utf-8') as f:#Serializacia load i otpravili v sorting
+            files = json.load(f)
 
-        for i in result:
+        for i in files:
             # print(result)
              # print(f"{i['client'].get('title'), i['catalogues'][0]['title']}, {i['town'].get('title')}")#,{i.get('positions')}
         #
@@ -128,10 +132,40 @@ if __name__ == '__main__':
         with open('res.json', 'w', encoding='utf-8') as f:
             json.dump(result, f, ensure_ascii=False)  # Dannie decodirovat nado
             index = 0
-            for i in result:
-                vac_tec = HHVacancy(i)
-                print(f"{index} {i['employer'].get('name')}, {i['area'].get('name')}, {i['salary'].get('from')}")
-                index +=1
+            # vac_tec=HHVacancy(result)
+        with open('res.json', 'r', encoding='utf-8') as f:#Serializacia load i otpravili v sorting
+            files = json.load(f)
+
+        HHVacancy.filter_sorting(files)
+        # for i in files:######################################################
+        #     vac_tec=HHVacancy(i)
+        #     l.append(vac_tec)
+        # ll = sorted(l)
+        # for i in ll:
+        #     print(i)
+        # H = []
+        # for i in l:
+        #     if index < 5 and max(l) not in H:
+        #         H.append(max(l))
+        #
+        #         l.remove(max(l))
+        #         index += 1
+        #     l.remove(max(l))
+        # for i in H:  # Выводим 5 вакансий с максимальными заплатами
+        #     print(f"Пять компаний с максимальными зарплатами вакансии Повар:  {i}")##################################
+        # pprint.pprint(ll,stream=None, indent=1, width=80)
+        # sorting(l)
+            # l = []
+            # for i in files:
+               #
+               # print(i)
+
+
+            # for i in result:
+            #     vac_tec = HHVacancy(i)
+
+            #     print(f"{index} {i['employer'].get('name')}, {i['area'].get('name')}, {i['salary'].get('from')}")
+            #     index +=1
                 # l.append(vac_tec)
                 # print(l)
                 # try:#Oshibkaa bila Attribute error
