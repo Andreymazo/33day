@@ -2,6 +2,9 @@ import operator
 import json
 import pprint
 
+import sort
+
+
 class Vacancy:  # Roditelskii class i zhelatelno abstractnii
     def __init__(self, link, name, description, price):
         self.name = link.json['employer'].get('name')
@@ -69,7 +72,7 @@ class HHVacancy(Vacancy):  # Add counter mixin
     l = []
 
     @classmethod
-    def filter_sorting(cls, vacancies):
+    def filter_sorting(cls, vacancies):#Собирает данные в список кортежей, убирает ошибки, и None, сортирует по зарплате и выводит 5
         global i
 
         index = 0
@@ -98,15 +101,47 @@ class HHVacancy(Vacancy):  # Add counter mixin
             else:
                 # except i is None:
                 index += 1
+        def func(x):  # Убираем None
+            if x[2] is not None:
+                return x
+        clean = [func(x) for x in HHVacancy.l if x[2] is not None]
+
+        def func_1(x):  # Сортировка по 3му элементу кортежа
+            return x[2]
+        final = sorted(clean, key=func_1)
+        # clean_dic={}#sozdadim slovar, контролируем пропажу дублей.Сортировку через словарь не доделал
+        # index = 1
+        # for i in clean:
+        #
+        #     clean_dic.update({index:i})
+        #     index += 1
+        # print(clean_dic)
+
+        # ttt = int(input('Введите номер элемента в кортеже, по кокторому будем сортровать'))
+        # final = sort.sortirovka(clean_dic, ttt)#Не успел доделать свою сортировку
+        for i in final:
+            print(i)  ###Выводим отсортрованное по зарплате
+        index = 0  # Выведем 5 вакансий с максимальными зарплатами
+        H = []
+
+        print(max(final, key=func_1))
+        for i in final:
+            if index < 5:
+                H.append(max(final, key=func_1))
+                final.remove(max(final, key=func_1))  # избавляемся от дубликатов
+                index += 1
+            final.remove(max(final))
+        print(f"Пять компаний с максимальными зарплатами вакансии Повар:  ")
+        index = 1
+        for i in H:  # Выводим 5 вакансий с максимальными заплатами
+            print(f"{index} {i}")  ##################################
+            index += 1
 
         # return cls.l ##Libo return libo print 106 strochka
             # pprint.pprint(cls.l, stream=None, indent=1, width=800)
 
-        clean = [x for x in cls.l if x is not None]
-        print(clean)
-
-
-
+        # clean = [x for x in cls.l if x is not None]
+        # print(clean)
 
 import pprint
 
@@ -146,15 +181,11 @@ def get_top(vacancies, top_count):
     # Vozvrashaet top {top_count} zapisey po zarplate (iter, next magic methods)
     pass
 
-
-with open('res.json', 'r', encoding='utf-8') as f:  # Serializacia load i otpravili v sorting
-    files = json.load(f)
-
 if __name__ == '__main__':
-    HHVacancy.filter_sorting(files)
+    with open('res.json', 'r', encoding='utf-8') as f:  # Serializacia load i otpravili v sorting
+        files = json.load(f)
 
-    for i in HHVacancy.l:
-        print(i)
+
 
 
     # def sort_key(e):
